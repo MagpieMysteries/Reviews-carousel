@@ -58,7 +58,7 @@
       });
     }
 
-    const reviewsUrl = 'https://github.com/MagpieMysteries/Reviews-carousel/blob/e45013e9e0946af84a3ca5fa6b5d356b9c9a8548/reviews.json';
+    const reviewsUrl = 'https://magpiemysteries.github.io/reviews-carousel/reviews.json';
     loadReviews(reviewsUrl).then(reviews => {
       appendReviews(reviews.slice(0, 20)); // Load first 20 reviews initially
       initializeCarousel();
