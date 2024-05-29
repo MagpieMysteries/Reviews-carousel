@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review Carousel</title>
+  <!-- Slick Carousel CSS -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+  <style>
+    .review-item {
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background: #fff;
+      margin: 10px;
+      border-radius: 5px;
+    }
+    .slick-prev, .slick-next {
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+<div class="review-carousel">
+  <!-- Reviews will be injected here -->
+</div>
+
+<!-- jQuery and Slick Carousel JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+<script>
+  $(document).ready(function(){
+    function loadReviews(url) {
+      return fetch(url)
+        .then(response => response.json());
+    }
+
+    function appendReviews(reviews) {
+      const reviewCarousel = $('.review-carousel');
+      reviews.forEach(review => {
+        const reviewItem = `
+          <div class="review-item">
+            <p>${review.content}</p>
+            <footer class="blockquote-footer">${review.author} on ${review.date}</footer>
+          </div>
+        `;
+        reviewCarousel.slick('slickAdd', reviewItem);
+      });
+    }
+
+    function initializeCarousel() {
+      $('.review-carousel').slick({
+        infinite: false,
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        lazyLoad: 'ondemand'
+      });
+    }
+
+    const reviewsUrl = 'https://github.com/MagpieMysteries/Reviews-carousel/blob/e45013e9e0946af84a3ca5fa6b5d356b9c9a8548/reviews.json';
+    loadReviews(reviewsUrl).then(reviews => {
+      appendReviews(reviews.slice(0, 20)); // Load first 20 reviews initially
+      initializeCarousel();
+      let offset = 20;
+      const limit = 20;
+
+      $('.review-carousel').on('afterChange', function(event, slick, currentSlide){
+        if (currentSlide + slick.options.slidesToShow >= slick.slideCount - slick.options.slidesToShow) {
+          appendReviews(reviews.slice(offset, offset + limit));
+          offset += limit;
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
